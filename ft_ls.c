@@ -326,6 +326,10 @@ int main(int argc, char **argv)
 
 	DIR *dir ;
 	t_list *list;
+	if (lst == NULL)
+	{
+		lst = ft_lstnew(ft_strdup("."));
+	}
 
 	struct stat sb;
 	long total = 0;
