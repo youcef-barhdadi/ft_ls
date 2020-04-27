@@ -1,0 +1,28 @@
+total 41
+lrwxrwxrwx   1 root root    7 Mar 22 19:06 bin -> usr/bin
+drwxr-xr-x   4 root root 1024 Apr 20 21:40 boot
+drwxr-xr-x  18 root root 3420 Apr 26 19:53 dev
+drwxr-xr-x   1 root root 6142 Apr 20 21:38 etc
+drwxr-xr-x   1 root root   14 Mar 31 14:00 home
+lrwxrwxrwx   1 root root   36 Mar 22 19:06 initrd.img -> boot/initrd.img-5.2.0-2parrot1-amd64
+lrwxrwxrwx   1 root root   36 Mar 22 19:06 initrd.img.old -> boot/initrd.img-5.2.0-2parrot1-amd64
+lrwxrwxrwx   1 root root    7 Mar 22 19:06 lib -> usr/lib
+lrwxrwxrwx   1 root root    9 Mar 22 19:06 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root    9 Mar 22 19:06 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root   10 Mar 22 19:06 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   28 Mar 23 21:47 media
+drwxr-xr-x   1 root root    0 Sep  9  2019 mnt
+drwxr-xr-x   1 root root   76 Mar 22 19:21 opt
+dr-xr-xr-x 177 root root    0 Apr 26 19:53 proc
+drwxr-xr-x   1 root root  222 Mar 23 18:40 root
+drwxr-xr-x  38 root root 1080 Apr 26 21:29 run
+drwxr-xr-x   1 root root 1060 Apr 20 21:41 sandbox
+lrwxrwxrwx   1 root root    8 Mar 22 19:06 sbin -> usr/sbin
+drwxr-xr-x   1 root root   34 Apr 25 01:17 snap
+drwxr-xr-x   1 root root    8 Mar 22 19:06 srv
+dr-xr-xr-x  13 root root    0 Apr 26 19:53 sys
+drwxrwxrwt   1 root root 1048 Apr 26 22:01 tmp
+drwxr-xr-x   1 root root  122 Mar 22 19:20 usr
+drwxr-xr-x   1 root root  126 Mar 22 19:21 var
+lrwxrwxrwx   1 root root   33 Mar 22 19:21 vmlinuz -> boot/vmlinuz-5.2.0-2parrot1-amd64
+lrwxrwxrwx   1 root root   33 Mar 22 19:21 vmlinuz.old -> boot/vmlinuz-5.2.0-2parrot1-amd64

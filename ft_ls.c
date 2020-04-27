@@ -86,8 +86,8 @@ t_file *get_usergroup_names(const struct stat st, t_file *file)
 
 t_file *get_file_type(const struct stat st,t_file *file)
 {
-	if (S_ISREG(st.st_mode))
-		file->permssion[0] = '-'; 
+	if (S_ISLNK(st.st_mode))
+		file->permssion[0] = 'l'; 
 	else if (S_ISDIR(st.st_mode))
 		file->permssion[0] = 'd'; 
 	else if (S_ISCHR(st.st_mode))
@@ -98,15 +98,15 @@ t_file *get_file_type(const struct stat st,t_file *file)
 		file->permssion[0] = 's'; 
 	else if (S_ISFIFO(st.st_mode))
 		file->permssion[0] = 'f'; 
-	else if (S_ISLNK(st.st_mode))
-		file->permssion[0] = 'l'; 
+	else if (S_ISREG(st.st_mode))
+		file->permssion[0] = '-'; 
 	else
 		file->permssion[0] = ' '; 
 	return file;
 }
 
 
-void print_long(struct stat st, char *filename)
+void print_long(struct stat st, char *filename, char *path)
 {
 	char buffer[1000];
 
@@ -116,8 +116,13 @@ void print_long(struct stat st, char *filename)
 	file->links = st.st_nlink;
 	if (S_ISLNK(st.st_mode))
 	{
-		ssize_t size = readlink(filename, buffer, 1000);
-		buffer[size] = 0;
+		ssize_t size = readlink(path, buffer, 1000);
+		if (size == -1)
+		{
+			perror("ft_ls ");
+			exit(1);
+		}
+		buffer[size] = '\0';
 		file->referto = ft_strdup(buffer);
 		file->islink  = 1;
 	}
@@ -125,7 +130,12 @@ void print_long(struct stat st, char *filename)
 	get_file_type(st, file);
 	get_usergroup_names(st, file);
 	char *time = ft_substr(ctime(&file->time),4,12);
-	printf("%s %lld %s %s %lld %s %s\n",file->permssion,file->links ,file->user_name, file->group_name, file->size,time, filename);
+	printf("%s %lld %s %s %lld %s %s",file->permssion,file->links ,file->user_name, file->group_name, file->size,time, filename);
+	if (S_ISLNK(st.st_mode))
+	{
+		printf(" -> %s", file->referto);
+	}
+	printf("\n");
 	free(file);
 }
 
@@ -222,10 +232,17 @@ int cmp_str(void *s1, void *s2)
 	return strcmp(s1, s2);
 }
 
+int cmp_str_rev(void *s1, void *s2)
+{
+
+	return  strcmp(s1, s2) * -1;
+}
 
 
 char *get_path(char *dir, char *filename)
 {
+	if (ft_strlen(dir) == 1 && dir[0] == '/')
+	return ft_strjoin("/", filename);
 	char *b = ft_strjoin(dir, "/");
 	return ft_strjoin(b, filename);
 
@@ -245,14 +262,14 @@ void handle_display(char *dir,t_list *list, t_config *con, int file)
 
 		if (con->llong)
 		{
-			if(stat(dir, &sb) < 0)
+			if(lstat(dir, &sb) < 0)
 			{
 
 				perror("ft_ls :");
 				exit(1);
 			}
 
-			print_long(sb, dir);
+			print_long(sb, dir, dir);
 
 		}
 		else
@@ -269,9 +286,9 @@ void handle_display(char *dir,t_list *list, t_config *con, int file)
 		if (con->llong)
 		{
 			path = get_path(dir, list->content);
-			if (((char *)list->content)[0] != '.')
-			{
-				if(stat(path, &sb) < 0)
+			if (con->hidden || ((char *)list->content)[0] != '.')
+			{	ft_memset(&sb, 0, sizeof(struct stat));
+				if(lstat(path, &sb) < 0)
 				{
 
 					printf("%s\n", path);
@@ -279,12 +296,14 @@ void handle_display(char *dir,t_list *list, t_config *con, int file)
 					exit(1);
 				}
 
-				print_long(sb, list->content);
+				print_long(sb, list->content, path);
+				//printf("%s %d\n", path, S_ISLNK(sb.st_mode));
+			
 			}
 		}
 		else
 		{
-			if (((char *)list->content)[0] != '.')
+			if (con->hidden ||  ((char *)list->content)[0] != '.')
 				printf("%s\t", list->content);
 		}
 		list = list->next;
@@ -322,7 +341,10 @@ int main(int argc, char **argv)
 		{
 			//dir =  opendir(lst->content);
 			list  = 	file_to_list(lst->content);
-			sort_list(&list, &cmp_str);
+			if (!con->rev)
+				sort_list(&list, &cmp_str);
+			else
+				sort_list(&list, &cmp_str_rev);
 		}
 		else
 			file = 1;
