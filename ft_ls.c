@@ -3,42 +3,6 @@
 
 
 
-void recurseve(char *start)
-{
-	char *path_mode;
-	DIR *dir = opendir(start);
-	struct dirent *info;
-	struct stat sb;
-	t_list *list = NULL;
-	int first = 0;
-	//list = ft_lstnew(ft_strdup("."));
-	printf("%s :\n", start);
-	start = ft_strjoin(start, "/");
-	while ((info = readdir(dir)))
-	{
-		if (stat(ft_strjoin(start, info->d_name), &sb) == -1)
-		{
-			printf("[%s]\n", info->d_name);
-			perror("ft_ls");
-			exit(2);
-		}
-		printf("%s\n", info->d_name);
-		if (S_ISDIR(sb.st_mode))
-		{
-			//	printf("(%s)\n",info->d_name);
-			if ( !ft_strchr(info->d_name, '.'))
-				ft_lstadd_back(&list, ft_lstnew(ft_strjoin(start, ft_strdup(info->d_name))));
-		}
-	}
-	while (list)
-	{
-
-		//		printf("%s\n", list->content);
-		recurseve(list->content);
-		list = list->next;
-	}
-}
-
 
 
 t_file *get_permssion(const struct stat st, t_file *file)
@@ -139,15 +103,6 @@ void print_long(struct stat st, char *filename, char *path)
 	free(file);
 }
 
-
-typedef struct  s_config
-{
-	int hidden;
-	int rev;
-	int rec;
-	int llong;
-}	t_config;
-
 void readoptions(char *option, t_config *con)
 {
 	int i = 1;
@@ -243,6 +198,7 @@ char *get_path(char *dir, char *filename)
 {
 	if (ft_strlen(dir) == 1 && dir[0] == '/')
 	return ft_strjoin("/", filename);
+	
 	char *b = ft_strjoin(dir, "/");
 	return ft_strjoin(b, filename);
 
@@ -315,6 +271,7 @@ void handle_display(char *dir,t_list *list, t_config *con, int file)
 }
 int main(int argc, char **argv)
 {
+	
 	char *path = ".";
 	int file = 0;
 	t_list *lst = NULL;
@@ -324,6 +281,14 @@ int main(int argc, char **argv)
 	///		path = argv[1];
 	parss_args(argv, con,&lst); 
 
+	if (con->rec)
+	{
+		while (lst)
+		{
+			recurseve(lst->content, con);
+			lst = lst->next;
+		}
+	}
 	DIR *dir ;
 	t_list *list;
 	if (lst == NULL)
@@ -357,5 +322,6 @@ int main(int argc, char **argv)
 		//closedir(dir);
 		lst = lst->next;
 	}
+
 	return 0;
 }

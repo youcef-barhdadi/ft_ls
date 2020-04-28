@@ -25,6 +25,17 @@ typedef struct s_file
 }t_file;
 
 
+typedef struct  s_config
+{
+	int hidden;
+	int rev;
+	int rec;
+	int llong;
+}	t_config;
+
+
+void recurseve(char *start, t_config *con);
+void handle_display(char *dir,t_list *list, t_config *con, int file);
 void sort_list(t_list **list, int (*cmp)(void *a, void *b));
 
 
